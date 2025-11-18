@@ -139,7 +139,7 @@ Answer:
 
     # Call OpenAI Chat Completions with the prompts and parameters
     resp = openai.chat.completions.create(
-        model="gpt-3.5-turbo",  # You can switch to "gpt-4o" or a newer model if available
+        model="GPT-5 nano",  
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
