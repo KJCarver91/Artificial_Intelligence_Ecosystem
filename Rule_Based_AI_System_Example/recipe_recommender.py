@@ -15,7 +15,8 @@ recipes = {
     "Chef's Salad": ["lettuce","tomatoes", "ham", "turkey", "hard boiled egg", "salad dressing"],
     "Grilled Cheese Sandiwich": ['bread', 'cheese', 'mayonaise', 'pickles'],
     "Bread": ['flour', 'yeast', 'oil'],
-    "Shrimp and Grits": ['shrimp', 'grits', 'cheese', 'bacon', 'green onion']
+    "Shrimp and Grits": ['shrimp', 'grits', 'cheese', 'bacon', 'green onion'],
+    "Chicken Salad": ['chicken', 'mayonaise', 'onion', 'celery', 'mustard']
 }
 
 # Function to recommend recipes
