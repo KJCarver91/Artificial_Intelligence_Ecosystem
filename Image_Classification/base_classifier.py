@@ -1,33 +1,52 @@
-import tensorflow as tf
-tf.get_logger().setLevel('ERROR')
+import os
+# Suppress oneDNN float32 warnings
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow import keras
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
-import numpy as np
 
-model = MobileNetV2(weights="imagenet")
+# Load pre-trained MobileNetV2 model
+model = MobileNetV2(weights='imagenet')
 
-def classify_image(image_path):
-    try:
-        img = image.load_img(image_path, target_size=(224, 224))
-        img_array = image.img_to_array(img)
-        img_array = preprocess_input(img_array)
-        img_array = np.expand_dims(img_array, axis=0)
+def load_and_preprocess(img_path, target_size=(224, 224)):
+    """Load an image file and preprocess it for MobileNetV2."""
+    img = image.load_img(img_path, target_size=target_size)
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    x = preprocess_input(x)
+    return x, img
 
-        predictions = model.predict(img_array)
-        decoded_predictions = decode_predictions(predictions, top=3)[0]
+def predict_image(img_path, save_plot=True):
+    """Predict the class of an image and optionally save the plot."""
+    x, img = load_and_preprocess(img_path)
 
-        print("\nTop-3 Predictions for", image_path)
-        for i, (_, label, score) in enumerate(decoded_predictions):
-            print(f"  {i + 1}: {label} ({score:.2f})")
-    except Exception as e:
-        print(f"Error processing '{image_path}': {e}")
+    # Make prediction
+    preds = model.predict(x)
+    decoded = decode_predictions(preds, top=3)[0]
 
+    # Print predictions
+    print("Predictions:")
+    for label, name, prob in decoded:
+        print(f"{name}: {prob:.4f}")
+
+    # Plot image with top prediction as title
+    plt.figure(figsize=(5, 5))
+    plt.imshow(img)
+    plt.axis('off')
+    plt.title(f"Top: {decoded[0][1]} ({decoded[0][2]:.2f})")
+
+    if save_plot:
+        # Save the figure with a consistent filename
+        plt.savefig('tiger_grancam_result.jpg')
+        print("Saved plot as 'tiger_grancam_result.jpg'.")
+
+# Example usage
 if __name__ == "__main__":
-    print("Image Classifier (type 'exit' to quit)\n")
-    while True:
-        image_path = input("Enter image filename: ").strip()
-        if image_path.lower() == "exit":
-            print("Goodbye!")
-            break
-        classify_image(image_path)
+    img_path = "images/Tiger.jpg"
+    predict_image(img_path)
+
+
